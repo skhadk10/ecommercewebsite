@@ -1,0 +1,43 @@
+### signup
+POST   http://localhost:8000/api/signup
+Content-Type: application/json
+
+        {
+            "name":"sannnnn",
+            "email":"sanjasasaasy@gmail.com",
+            "password":"1234sdd56"
+        }
+### signin
+POST   http://localhost:8000/api/signin
+Content-Type: application/json
+
+        {
+            "email":"silwal@example.com",
+            "password":"12231dd"
+        }
+
+### signout
+GET  http://localhost:8000/api/signout
+
+
+### getting user by id from database
+GET  http://localhost:8000/api/secret/62ecdba52206da1ae19381c2
+
+
+### index     testing require signin  
+GET   http://localhost:8000/api/index
+
+
+### authorization token 
+GET   http://localhost:8000/api/index
+
+
+
+### product
+POST  http://localhost:8000/api/product/create/62f861bc42a84c43a432e99a
+
+Content-Type: multipart/form-data
+
+{
+    " name":"note book"
+}
