@@ -4,6 +4,24 @@ const fs = require("fs");
 const Product = require("../models/product.js");
 const { errorHandler } = require("../helper/dbErrorHandler.js");
 
+exports.productById= (req, res,next,id) => {
+  console.log("Product")
+  Product.findById(id).exec((err, product) => {
+    if(err ||!product) {
+      return res.status(400).json({
+        error: "product not found",
+      });}
+      req.product=product;
+      next()
+    });
+  }
+
+exports.read= (req, res) => {
+  console.log(req.product);
+  req.product.photo=undefined;
+ return  res.json(req.product);
+}
+
 exports.create = (req, res) => {
   const form = new Formidable.IncomingForm();
   form.keepExtensions = true;
