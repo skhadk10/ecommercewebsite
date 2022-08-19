@@ -22,6 +22,19 @@ exports.read= (req, res) => {
  return  res.json(req.product);
 }
 
+exports.remove= (req, res) => {
+  let product=req.product;
+  product.remove((err,deletedProduct) => {
+    if(err) {
+      return res.status(400).json({
+        error: errorHandler(err)
+      })
+    }
+        res.json({
+          message:"Product deleted Successfully"
+        })
+      })
+    }
 exports.create = (req, res) => {
   const form = new Formidable.IncomingForm();
   form.keepExtensions = true;
