@@ -29,7 +29,7 @@ GET   http://localhost:8000/api/index
 
 
 ### authorization token 
-GET   http://localhost:8000/api/index
+GET   http://localhost:8000/api/categories
 
 
 
