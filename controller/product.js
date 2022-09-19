@@ -172,7 +172,7 @@ exports.list = (req, res) => {
 
 // it will find the products based on the req product category
 // other products that has the same category, will be returned
-// hamle yesma product vetra ko category ko base ma product find garna khojyeko 
+// hamle yesma product vetra ko category ko base ma product find garna khojyeko
 exports.listRelated = (req, res) => {
   let limit = req.query.limit ? parseInt(req.query.limit) : 6;
   // $ne vanyeko dont select. product vetra ko category ko find gar ani le vanya xa. anif frontend ma productid ko marfat search garda related category ko product matra khoj vanxa
@@ -188,14 +188,14 @@ exports.listRelated = (req, res) => {
 };
 
 // it find the category and show the category id which is used by product
-exports.listCategories= (req, res) => {
-  Product.distinct("category",{},(err, products) => {
+exports.listCategories = (req, res) => {
+  Product.distinct("category", {}, (err, products) => {
     if (err) {
       return res.status(400).json({ errror: "Product not found" });
     }
     res.json(products);
-  })
-}
+  });
+};
 // list product by search
 // we will implemet product seaarch in react frontend
 // we will show categories in checkbox and price range in radio buttons
@@ -210,47 +210,70 @@ exports.listBySearch = (req, res) => {
 
   // console.log(order, sortBy, limit, skip, req.body.filters);
   // console.log("findArgs", findArgs);
-// grabbing the key out of object(req.body that we get)
+  // grabbing the key out of object(req.body that we get)
   for (let key in req.body.filters) {
-      if (req.body.filters[key].length > 0) {
-          if (key === "price") {
-              // gte -  greater than price [0-10]
-              // lte - less than
-              findArgs[key] = {
-                // grabbing the keywhich is greater than 0
-                  $gte: req.body.filters[key][0],
-                  // grabbing the keywhich is less than 1
-                  $lte: req.body.filters[key][1]
-              };
-          } else {
-              findArgs[key] = req.body.filters[key];
-          }
+    if (req.body.filters[key].length > 0) {
+      if (key === "price") {
+        // gte -  greater than price [0-10]
+        // lte - less than
+        findArgs[key] = {
+          // grabbing the keywhich is greater than 0
+          $gte: req.body.filters[key][0],
+          // grabbing the keywhich is less than 1
+          $lte: req.body.filters[key][1],
+        };
+      } else {
+        findArgs[key] = req.body.filters[key];
       }
+    }
   }
 
   Product.find(findArgs)
-      .select("-photo")
-      .populate("category")
-      .sort([[sortBy, order]])
-      .skip(skip)
-      .limit(limit)
-      .exec((err, data) => {
-          if (err) {
-              return res.status(400).json({
-                  error: "Products not found"
-              });
-          }
-          res.json({
-              size: data.length,
-              data
-          });
+    .select("-photo")
+    .populate("category")
+    .sort([[sortBy, order]])
+    .skip(skip)
+    .limit(limit)
+    .exec((err, data) => {
+      if (err) {
+        return res.status(400).json({
+          error: "Products not found",
+        });
+      }
+      res.json({
+        size: data.length,
+        data,
       });
+    });
 };
 
+exports.photo = (req, res, next) => {
+  if (req.product.photo.data) {
+    res.set("Content-Type", req.product.photo.contentType);
+    return res.send(req.product.photo.data);
+  }
+  next();
+};
 
-exports.photo = (req, res,next) => {
-  if(req.product.photo.data){
-    res.set('Content-Type',req.product.photo.contentType);
-    return res.send(req.product.photo.data)
- }
- next() }
+exports.listSearch = (req, res) => {
+  // create query object to hold search value and category value
+  const query = {};
+  // assign search value to query.name
+  if (req.query.search) {
+    query.name = { $regex: req.query.search, $options: "i" };
+    // assign category value to query.category
+    if (req.query.category && req.query.category != "All") {
+      query.category = req.query.category;
+    }
+    // find the product ased on query object with 2 properties
+    // search and category
+    Product.find(query, (err, products) => {
+      if (err) {
+        return res.status(400).json({
+          error: errorHandler(err),
+        });
+      }
+      res.json(products);
+    }).select("-photo");
+  }
+};
