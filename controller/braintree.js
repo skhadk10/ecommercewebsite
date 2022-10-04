@@ -2,7 +2,7 @@ const User = require("../models/user");
 const braintree = require("braintree");
 require("dotenv").config();
 
-const geteway = new braintree.BraintreeGateway({
+const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
   merchantId: process.env.BRAINTREE_MERCHANT_ID,
   publicKey: process.env.BRAINTREE_PUBLIC_KEY,
@@ -10,7 +10,7 @@ const geteway = new braintree.BraintreeGateway({
 });
 
 exports.generateToken = (req, res) => {
-  geteway.clientToken.generate({}, function (err, response) {
+  gateway.clientToken.generate({}, function (err, response) {
     if (err) {
       res.status(500).send(err);
     } else {
@@ -18,3 +18,26 @@ exports.generateToken = (req, res) => {
     }
   });
 };
+
+exports.processPayment=(req,res) => {
+  let nonceFromTheClient =req.body.paymentMethodNonce
+  let amountFromTheClient = req.body.amount
+  // charge
+  let newTranscation=gateway.transaction.sale(
+    {
+    amount: amountFromTheClient,
+    paymentMethodNonce:nonceFromTheClient,
+    options:{
+      submitForSettlement:true
+    }
+  },
+    (error,result) => {
+      if(error) {
+        res.status(500).json(error)
+      }
+      else{
+        res.json(result)
+      }
+  })
+}
+  

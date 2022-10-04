@@ -26,6 +26,7 @@ const userRoutes= require("./routes/user.js");
 const categoryRoutes= require("./routes/category.js"); 
 const productRoutes= require("./routes/product.js"); 
 const braintreeRoutes= require("./routes/braintree.js"); 
+const orderRoutes= require("./routes/order.js"); 
 
 // Db
 
@@ -41,6 +42,7 @@ app.use("/api",authRoutes)
 app.use("/api",categoryRoutes)
 app.use("/api",productRoutes)
 app.use("/api",braintreeRoutes)
+app.use("/api",orderRoutes)
 
 
 

@@ -279,3 +279,22 @@ exports.listSearch = (req, res) => {
     }).select("-photo");
   }
 };
+
+exports.decreaseQuantity = (req, res) => {
+  let bulkOps=req.body.order.products.map(item =>{
+    return {
+      updateOne:{
+        filter:{_id:item._id},
+        update:{$inc:{quantity:-item.count, sold: +item.count}}
+      }
+    }
+  })
+  Product.bulkWrite(bulkOps,{}, (error, data) =>{
+    if(error){
+      return res.status(400).json({
+        error:errorHandler(error)
+      }) }
+      res.json(data)
+   
+})
+}
