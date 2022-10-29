@@ -90,6 +90,7 @@ exports.create = (req, res) => {
   });
 };
 exports.update = (req, res) => {
+  console.log("hello update")
   const form = new Formidable.IncomingForm();
   form.keepExtensions = true;
 
@@ -101,19 +102,19 @@ exports.update = (req, res) => {
     }
 
     // check for all fields
-    const { name, description, price, category, quantity, shipping } = fields;
-    if (
-      !name ||
-      !description ||
-      !price ||
-      !category ||
-      !quantity ||
-      !shipping
-    ) {
-      return res.status(400).json({
-        error: "All fields are required.",
-      });
-    }
+    // const { name, description, price, category, quantity, shipping } = fields;
+    // if (
+    //   !name ||
+    //   !description ||
+    //   !price ||
+    //   !category ||
+    //   !quantity ||
+    //   !shipping
+    // ) {
+    //   return res.status(400).json({
+    //     error: "All fields are required.",
+    //   });
+    // }
     // getting the product from the productbyid which is req.product
     let product = req.product;
     product = _.extend(product, fields);
